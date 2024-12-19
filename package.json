@@ -1,0 +1,28 @@
+{
+  "name": "xyoo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/Main.ts",
+  "scripts": {
+    "dev": "ts-node src/Main.ts",
+    "format": "prettier . --check",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Scholar7r <scholar7r@outlook.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "@tsconfig/recommended": "^1.0.8",
+    "@types/node": "^22.10.2",
+    "prettier": "3.4.2",
+    "ts-node": "^10.9.2",
+    "tslib": "^2.8.1",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "commander": "^12.1.0",
+    "tslog": "^4.9.3",
+    "yaml": "^2.6.1"
+  }
+}

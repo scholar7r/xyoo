@@ -1,0 +1,21 @@
+# openIdPoolService returns one openId which is able to request
+openIdPoolService:
+  -
+    endpoint: 
+    appSecret: 
+
+# openIdPool contains openIds when current openId is not active to request
+# endpoints, openIds in openIdPool should be maintained carefully
+openIdPool:
+  - ...
+  - ...
+  - ...
+
+users:
+  -
+    openId: ...
+    unionId:  ...
+  -
+    openId: None
+    unionId: None
+ 
