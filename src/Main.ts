@@ -71,11 +71,46 @@ const main = async () => {
             logger.error(error);
           });
 
-        if (traineeId == null) continue;
-        await endpoints.clock
-          .doClock({ sessionId, traineeId })
+        const address = await endpoints
+          .regeo(element.address, configuration.endpointSettings.amap.key)
           .then((response) => {
-            logger.debug(response);
+            if (response.status == "1") {
+              logger.debug(`Got address information from endpoint`);
+            } else {
+              return Promise.reject(
+                `Failed to fetch address information from endpoint`,
+              );
+            }
+
+            const addressComponent = {
+              adcode: response.regeocode.addressComponent.adcode,
+              formattedAddress: response.regeocode.formatted_address,
+            };
+
+            return addressComponent;
+          })
+          .catch((error) => {
+            logger.error(error);
+          });
+
+        if (traineeId == null) continue;
+        if (!address) continue;
+        await endpoints.clock
+          .doClock({
+            sessionId,
+            traineeId,
+            deviceName: element.deviceName,
+            adcode: address.adcode,
+            lat: element.address.split(",").map(Number)[1],
+            lng: element.address.split(",").map(Number)[0],
+            address: address.formattedAddress,
+          })
+          .then((response) => {
+            if (response.code) {
+              logger.info("Successful clock-in for current user");
+            } else {
+              return Promise.reject(`Failed to clock-in for current user`);
+            }
           })
           .catch((error) => {
             logger.error(error);

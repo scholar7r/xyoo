@@ -1,295 +1,361 @@
 import { createHash } from "crypto";
 
-const specialCharsRegexp = new RegExp(
-  "[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]",
-);
-
-/**
- * Find which value of a key contains special keys
- */
-const findSpecialKeys = (originObject: Record<string, string>): string[] => {
-  let specialChars = [
-    "`",
-    "~",
-    "!",
-    "@",
-    "#",
-    "$",
-    "%",
-    "^",
-    "&",
-    "*",
-    "(",
-    ")",
-    "+",
-    "=",
-    "|",
-    "{",
-    "}",
-    "'",
-    ":",
-    ";",
-    "'",
-    ",",
-    "[",
-    "]",
-    ".",
-    "<",
-    ">",
-    "/",
-    "?",
-    "~",
-    "！",
-    "@",
-    "#",
-    "￥",
-    "%",
-    "…",
-    "…",
-    "&",
-    "*",
-    "（",
-    "）",
-    "—",
-    "—",
-    "+",
-    "|",
-    "{",
-    "}",
-    "【",
-    "】",
-    "‘",
-    "；",
-    "：",
-    "”",
-    "“",
-    "’",
-    "。",
-    "，",
-    "、",
-    "？",
-    '"',
-  ];
-  let keysToValidate: string[] = [
-    "content",
-    "deviceName",
-    "keyWord",
-    "blogBody",
-    "blogTitle",
-    "getType",
-    "responsibilities",
-    "street",
-    "text",
-    "reason",
-    "searchvalue",
-    "key",
-    "answers",
-    "leaveReason",
-    "personRemark",
-    "selfAppraisal",
-    "imgUrl",
-    "wxname",
-    "deviceId",
-    "avatarTempPath",
-    "file",
-    "file",
-    "model",
-    "brand",
-    "system",
-    "deviceId",
-    "platform",
-    "code",
-    "openId",
-    "unionid",
-    "clockDeviceToken",
-    "clockDevice",
-  ];
-
-  for (let key in originObject) {
-    let value: string = originObject[key] || "";
-    if (value === "" || value === null) continue;
-    console.info(value);
-    value
-      .toString()
-      .split("")
-      .some((char) => {
-        if (specialChars.indexOf(char) > -1) {
-          if (keysToValidate.indexOf(key) === -1) {
-            keysToValidate.push(key);
-          }
-          return true;
-        }
+const Q = new RegExp(
+    "[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]",
+  ),
+  W = (e: any) => {
+    const t = [
+        "`",
+        "~",
+        "!",
+        "@",
+        "#",
+        "$",
+        "%",
+        "^",
+        "&",
+        "*",
+        "(",
+        ")",
+        "+",
+        "=",
+        "|",
+        "{",
+        "}",
+        "'",
+        ":",
+        ";",
+        "'",
+        ",",
+        "[",
+        "]",
+        ".",
+        "<",
+        ">",
+        "/",
+        "?",
+        "~",
+        "！",
+        "@",
+        "#",
+        "￥",
+        "%",
+        "…",
+        "…",
+        "&",
+        "*",
+        "（",
+        "）",
+        "—",
+        "—",
+        "+",
+        "|",
+        "{",
+        "}",
+        "【",
+        "】",
+        "‘",
+        "；",
+        "：",
+        "”",
+        "“",
+        "’",
+        "。",
+        "，",
+        "、",
+        "？",
+        '"',
+      ],
+      n = [
+        "content",
+        "deviceName",
+        "keyWord",
+        "blogBody",
+        "blogTitle",
+        "getType",
+        "responsibilities",
+        "street",
+        "text",
+        "reason",
+        "searchvalue",
+        "key",
+        "answers",
+        "leaveReason",
+        "personRemark",
+        "selfAppraisal",
+        "imgUrl",
+        "wxname",
+        "deviceId",
+        "avatarTempPath",
+        "file",
+        "file",
+        "model",
+        "brand",
+        "system",
+        "deviceId",
+        "platform",
+        "code",
+        "openId",
+        "unionid",
+        "clockDeviceToken",
+        "clockDevice",
+      ];
+    for (const a in e) {
+      const o = String(e[a]);
+      o.split("").some((e) => {
+        if (t.indexOf(e) > -1) return -1 == n.indexOf(a) && n.push(a), !0;
       });
-  }
-
-  return keysToValidate;
-};
-
-// A list contains endpoint urls should be validated
-const endpointUrlsNeedsValidate: string[] = [
-  "front/enterprise/loadEnterprise.action",
-  "front/post/EnterprisePostLoad.action",
-  "helpcenter/video/VideoPlayAuth.action",
-  "login/teacher/sendMobileOrEmailCode.action",
-  "login/student/sendMobileCode.action",
-];
-
-/**
- * Sort objects
- */
-const sortObjectKeys = (
-  originObject: Record<string, string>,
-): Record<string, string> => {
-  if (originObject === undefined) return {};
-
-  const sortedKeys = Object.keys(originObject).sort();
-  const sortedObjects: Record<string, string> = {};
-  for (const key of sortedKeys) {
-    sortedObjects[key] = originObject[key];
-  }
-
-  return sortedObjects;
-};
-
-/**
- * Generate random elements from an array
- */
-const randomElements = (array: string[], count: number): string[] => {
-  const uniqueCount = Math.min(count, array.length);
-  let temporaryArray = array.slice(0);
-
-  for (let i = temporaryArray.length - 1; i > 0; i--) {
-    const randomIndex = Math.floor(Math.random() * (i + 1));
-    [temporaryArray[i], temporaryArray[randomIndex]] = [
-      temporaryArray[randomIndex],
-      temporaryArray[i],
-    ];
-  }
-
-  return temporaryArray.slice(0, uniqueCount);
-};
-
-/**
- * Build Token
- */
-const buildToken = (
-  originObject: Record<string, string>,
-): { m: string; t: number; s: string } => {
-  const signatureChars = [
-    "5",
-    "b",
-    "f",
-    "A",
-    "J",
-    "Q",
-    "g",
-    "a",
-    "l",
-    "p",
-    "s",
-    "q",
-    "H",
-    "4",
-    "L",
-    "Q",
-    "g",
-    "1",
-    "6",
-    "Q",
-    "Z",
-    "v",
-    "w",
-    "b",
-    "c",
-    "e",
-    "2",
-    "2",
-    "m",
-    "l",
-    "E",
-    "g",
-    "G",
-    "H",
-    "I",
-    "r",
-    "o",
-    "s",
-    "d",
-    "5",
-    "7",
-    "x",
-    "t",
-    "J",
-    "S",
-    "T",
-    "F",
-    "v",
-    "w",
-    "4",
-    "8",
-    "9",
-    "0",
-    "K",
-    "E",
-    "3",
-    "4",
-    "0",
-    "m",
-    "r",
-    "i",
-    "n",
-  ];
-
-  const indexArray: string[] = [];
-  for (let i = 0; i < 62; i++) {
-    indexArray.push(i.toString());
-  }
-
-  const currentTimestamp = Math.round(Date.now() / 1000);
-  const randomIndices = randomElements(indexArray, 20);
-
-  let tokenValue = "";
-  randomIndices.forEach((index: string) => {
-    tokenValue += signatureChars[parseInt(index, 10)];
-  });
-
-  const sortedObjects = sortObjectKeys(originObject);
-
-  let filteredValue = "";
-  for (const key in sortedObjects) {
-    if (
-      findSpecialKeys(originObject).indexOf(key) === -1 &&
-      !specialCharsRegexp.test(sortedObjects[key]) &&
-      sortedObjects[key] != null &&
-      sortedObjects[key] !== "" &&
-      sortedObjects[key] !== '""'
-    ) {
-      filteredValue += sortedObjects[key];
     }
-  }
-
-  filteredValue += currentTimestamp;
-  filteredValue += tokenValue;
-
-  filteredValue = filteredValue
-    .replace(/\s+/g, "")
-    .replace(/\n+/g, "")
-    .replace(/\r+/g, "")
-    .replace(/</g, "")
-    .replace(/>/g, "")
-    .replace(/&/g, "")
-    .replace(/-/g, "")
-    .replace(/\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDE4F]/g, "");
-
-  filteredValue = encodeURIComponent(filteredValue);
-
-  return {
-    m: createHash("md5").update(filteredValue).digest("hex"),
-    t: currentTimestamp,
-    s: randomIndices.length > 0 ? randomIndices.join("_") : "",
+    return n;
+  },
+  V = () => {
+    const e = [
+      "front/enterprise/loadEnterprise.action",
+      "front/post/EnterprisePostLoad.action",
+      "helpcenter/video/VideoPlayAuth.action",
+      "login/teacher/sendMobileOrEmailCode.action",
+      "login/student/sendMobileCode.action",
+    ];
+    return e;
+  },
+  z = (e: any) => {
+    //分割字符串
+    if (void 0 == e) return {};
+    for (var t = Object.keys(e).sort(), n: any = {}, a = 0; a < t.length; a++)
+      n[t[a]] = e[t[a]];
+    return n;
+  },
+  F = (e: any, t: any) => {
+    //生成(e.length - t)个随机排序的数字
+    let n,
+      a,
+      o = e.slice(0),
+      i = e.length,
+      r = i - t;
+    while (i-- > r)
+      (a = Math.floor((i + 1) * Math.random())),
+        (n = o[a]),
+        (o[a] = o[i]),
+        (o[i] = n);
+    return o.slice(r);
+  },
+  H = (e: any, _t: any) => {
+    const n = [
+        "5",
+        "b",
+        "f",
+        "A",
+        "J",
+        "Q",
+        "g",
+        "a",
+        "l",
+        "p",
+        "s",
+        "q",
+        "H",
+        "4",
+        "L",
+        "Q",
+        "g",
+        "1",
+        "6",
+        "Q",
+        "Z",
+        "v",
+        "w",
+        "b",
+        "c",
+        "e",
+        "2",
+        "2",
+        "m",
+        "l",
+        "E",
+        "g",
+        "G",
+        "H",
+        "I",
+        "r",
+        "o",
+        "s",
+        "d",
+        "5",
+        "7",
+        "x",
+        "t",
+        "J",
+        "S",
+        "T",
+        "F",
+        "v",
+        "w",
+        "4",
+        "8",
+        "9",
+        "0",
+        "K",
+        "E",
+        "3",
+        "4",
+        "0",
+        "m",
+        "r",
+        "i",
+        "n",
+      ],
+      a: string[] = [];
+    for (let u = 0; u < 62; u++) a.push(u + "");
+    let o = Math.round(new Date().getTime() / 1e3),
+      i = F(a, 20),
+      r = "";
+    i.forEach((e: any, _t: any) => {
+      r += n[e];
+    });
+    const s: any = z(e);
+    let c = "";
+    //!(过滤的字段 ||  特殊字符）不添加到字符串中  过滤 &nbsp;
+    // 过滤出参与加密的字段
+    for (const l in s) {
+      -1 != W(e).indexOf(l) ||
+        Q.test(s[l]) ||
+        (null != s[l] && "" !== s[l] && '""' !== s[l] && (c += s[l]));
+    }
+    return (
+      (c += o),
+      (c += r),
+      (c = c.replace(/\s+/g, "")),
+      (c = c.replace(/\n+/g, "")),
+      (c = c.replace(/\r+/g, "")),
+      (c = c.replace(/</g, "")),
+      (c = c.replace(/>/g, "")),
+      (c = c.replace(/&/g, "")),
+      (c = c.replace(/-/g, "")),
+      (c = c.replace(/\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDE4F]/g, "")),
+      (c = encodeURIComponent(c)),
+      (c = createHash("md5").update(c).digest("hex")),
+      {
+        md5: c,
+        tstr: o,
+        iArrStr: i && i.length > 0 ? i.join("_") : "",
+      }
+    );
+  },
+  Y = (e: any, _t: any) => {
+    if (!e) return;
+    let n = [
+        "5",
+        "b",
+        "f",
+        "A",
+        "J",
+        "Q",
+        "g",
+        "a",
+        "l",
+        "p",
+        "s",
+        "q",
+        "H",
+        "4",
+        "L",
+        "Q",
+        "g",
+        "1",
+        "6",
+        "Q",
+        "Z",
+        "v",
+        "w",
+        "b",
+        "c",
+        "e",
+        "2",
+        "2",
+        "m",
+        "l",
+        "E",
+        "g",
+        "G",
+        "H",
+        "I",
+        "r",
+        "o",
+        "s",
+        "d",
+        "5",
+        "7",
+        "x",
+        "t",
+        "J",
+        "S",
+        "T",
+        "F",
+        "v",
+        "w",
+        "4",
+        "8",
+        "9",
+        "0",
+        "K",
+        "E",
+        "3",
+        "4",
+        "0",
+        "m",
+        "r",
+        "i",
+        "n",
+      ],
+      a = e.t,
+      o = e.s.split("_"),
+      i = "";
+    o.forEach((e: any, _t: any) => {
+      i += n[e];
+    });
+    let r = "";
+    return (
+      (r += a),
+      (r += i),
+      (r = r.replace(/\s+/g, "")),
+      (r = r.replace(/\n+/g, "")),
+      (r = r.replace(/\r+/g, "")),
+      (r = r.replace(/</g, "")),
+      (r = r.replace(/>/g, "")),
+      (r = r.replace(/&/g, "")),
+      (r = r.replace(/-/g, "")),
+      (r = r.replace(/\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDE4F]/g, "")),
+      (r = encodeURIComponent(r)),
+      (r = createHash("md5").update(r).digest("hex")),
+      r == e.m
+    );
   };
+const Z = {
+  getTokenData: H,
+  checkToken: Y,
+  nocheckArrs: W,
+  checkUrl: V,
 };
 
-export const mstv = (originObject: any) => {
-  return { ...buildToken(originObject), v: "1.6.36" };
+export const xybMstv = function (data: any) {
+  const headers: any = {
+    Host: "xcx.xybsyw.com",
+    Connection: "keep-alive",
+    "User-agent":
+      "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36 MicroMessenger/7.0.9.501 NetType/WIFI MiniProgramEnv/Windows WindowsWechat",
+    // referer: "https://servicewechat.com/wx9f1c2e0bbc10673c/317/page-frame.html",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Accept-Language": "zh-cn",
+    "content-type": "application/x-www-form-urlencoded",
+    v: "1.6.36",
+    // xweb_xhr: 1,
+  };
+  const n = Z.nocheckArrs(data).join(","),
+    a = Z.getTokenData(data, "");
+  Z.checkUrl();
+  (headers.n = n),
+    (headers.m = a.md5),
+    (headers.t = a.tstr),
+    (headers.s = a.iArrStr);
+  return headers;
 };

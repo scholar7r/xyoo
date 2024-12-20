@@ -1,15 +1,23 @@
-import { createHash } from "crypto";
 import { readFileSync } from "fs";
 import { parse } from "yaml";
 
 interface ConfigurationUsersOpt {
   openId: string;
   unionId: string;
+  address: string;
+  deviceName: string;
+}
+
+interface ConfigurationEndpointSettingsOpt {
+  amap: {
+    key: string;
+  };
 }
 
 export interface ConfigurationOpt {
   openIdPool: string[];
   users: ConfigurationUsersOpt[];
+  endpointSettings: ConfigurationEndpointSettingsOpt;
 }
 
 /**
