@@ -19,3 +19,6 @@ users:
     openId: None
     unionId: None
  
+endpointSettings:
+  amap:
+    key: c222383ff12d31b556c3ad6145bb95f4
