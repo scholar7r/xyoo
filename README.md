@@ -52,19 +52,26 @@ After installed them, you can run scripts defined.
 
 **Sciprts Manual**
 
-| Script                    | For what    |
-| :-----------------------: | :---------: |
-| dev <command> [options]   | Run program |
+|         Script          |  For what   |
+| :---------------------: | :---------: |
+| dev <command> [options] | Run program |
 
-| Command  | For what              |
-| :------: | :-------------------: |
-| in       | Run clock-in process  |
-| out      | Run clock-out process |
-| mamba    | Alias of out          |
+| Command |       For what        |
+| :-----: | :-------------------: |
+|   in    | Run clock-in process  |
+|   out   | Run clock-out process |
+|  mamba  |     Alias of out      |
 
-| Option              | For what                                          |
+|       Option        |                     For what                      |
 | :-----------------: | :-----------------------------------------------: |
-| -t <filename>       | Select target configuration file to run processes |
-| --target <filename> | Alias of -t                                       |
+|    -t <filename>    | Select target configuration file to run processes |
+| --target <filename> |                    Alias of -t                    |
+
+# FaQ
+
+1. Insecure login
+
+Due to the XiaoYouBang applet server changed it's logic to identify user's status,
+you should run XiaoYouBang applet before 8-12 hours.
 
 Copyright (c) 2024 scholar7r. All Rights Reserved.
