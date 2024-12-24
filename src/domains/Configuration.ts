@@ -15,7 +15,6 @@ interface ConfigurationEndpointSettingsOpt {
 }
 
 export interface ConfigurationOpt {
-  openIdPool: string[];
   users: ConfigurationUsersOpt[];
   endpointSettings: ConfigurationEndpointSettingsOpt;
 }
