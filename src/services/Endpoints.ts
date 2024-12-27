@@ -45,7 +45,9 @@ interface ClockDetailDefaultResponseOpt {
   };
 }
 
-interface ClockDetailResponseOpt {}
+// TODO: Clock detail
+//
+// interface ClockDetailResponseOpt {}
 
 interface ClockDoClockResponseOpt {
   code: string;
@@ -57,9 +59,10 @@ interface ClockDoClockResponseOpt {
   msg: string;
 }
 
-interface ClockUpdateClockResponseOpt {}
-
-interface ClockHistoryResponseOpt {}
+// TODO: Clock update and history response options interface
+//
+// interface ClockUpdateClockResponseOpt {}
+// interface ClockHistoryResponseOpt {}
 
 interface RegeoResponseOpt {
   status: string;
@@ -71,9 +74,10 @@ interface RegeoResponseOpt {
   };
 }
 
-interface PusherQmsgResponseOpt {}
-
-interface PusherWxPusherResponseOpt {}
+// TODO: Pusher response options interface
+//
+// interface PusherQmsgResponseOpt {}
+// interface PusherWxPusherResponseOpt {}
 
 export const endpoints = {
   user: {
@@ -130,6 +134,7 @@ export const endpoints = {
       lat: number;
       lng: number;
       address: string;
+      isClockIn: boolean;
       reason?: string;
     }): Promise<ClockDoClockResponseOpt> => {
       // Before submit clock information, it should request amap regeo endpoint to get detialed information
@@ -141,6 +146,7 @@ export const endpoints = {
         lng: clockOpt.lng,
         address: clockOpt.address,
         deviceName: clockOpt.deviceName,
+        // punchInStatus seems always 1
         punchInStatus: "1",
         // NOTE
         // ClockStatus is a boolean switch to identify is user clocked, if it's value is 1,
@@ -149,7 +155,10 @@ export const endpoints = {
         //
         // When develop clock-out function, doClock function can got clockStatus from arguments,
         // and do things like "if you have clocked-in, let me help you to clock-out"
-        clockStatus: "2",
+        //
+        // e.g.
+        // clockStatus: "2",
+        clockStatus: clockOpt.isClockIn ? "2" : "1",
         addressId: null,
         // NOTE
         //

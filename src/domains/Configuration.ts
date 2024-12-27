@@ -1,14 +1,16 @@
 import { readFileSync } from "fs";
 import { parse } from "yaml";
 
-interface ConfigurationUsersOpt {
+export interface ConfigurationUsersOpt {
   openId: string;
   unionId: string;
   address: string;
   deviceName: string;
+  cron: string;
+  timezone: string;
 }
 
-interface ConfigurationEndpointSettingsOpt {
+export interface ConfigurationEndpointSettingsOpt {
   amap: {
     key: string;
   };
