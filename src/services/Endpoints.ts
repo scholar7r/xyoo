@@ -6,7 +6,7 @@ const logger = new Logger();
 
 const endpointUrls = {
   user: {
-    credentialLogin: "https://xcx.xybsyw.com/login/login!wx.action",
+    credentialLogin: "https://xcx.xybsyw.com/login/login.action",
     details: "https://xcx.xybsyw.com/account/LoadAccountInfo.action",
   },
   clock: {
@@ -78,6 +78,8 @@ interface PusherWxPusherResponseOpt {}
 export const endpoints = {
   user: {
     credentialLogin: async (credentials: {
+      phoneNumber: string;
+      digestPassword: string;
       openId: string;
       unionId: string;
     }): Promise<UserCrentialLoginResponseOpt> => {
@@ -85,6 +87,8 @@ export const endpoints = {
         .request({
           url: endpointUrls.user.credentialLogin,
           params: {
+            username: credentials.phoneNumber,
+            password: credentials.digestPassword,
             openId: credentials.openId,
             unionId: credentials.unionId,
           },
