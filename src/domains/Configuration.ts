@@ -1,7 +1,14 @@
 import { readFileSync } from "fs";
 import { parse } from "yaml";
 
-interface ConfigurationUsersOpt {
+interface ConfigurationCredentialsPoolOpt {
+  openId: string;
+  unionId: string;
+}
+
+export interface ConfigurationUsersOpt {
+  phoneNumber: string;
+  digestPassword: string;
   openId: string;
   unionId: string;
   address: string;
@@ -15,6 +22,7 @@ interface ConfigurationEndpointSettingsOpt {
 }
 
 export interface ConfigurationOpt {
+  credentialsPool: ConfigurationCredentialsPoolOpt[];
   users: ConfigurationUsersOpt[];
   endpointSettings: ConfigurationEndpointSettingsOpt;
 }
