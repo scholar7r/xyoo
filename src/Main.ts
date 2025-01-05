@@ -14,11 +14,21 @@ const main = async () => {
     const configuration: ConfigurationOpt = new Configuration(
       targetFile,
     ).read();
+    logger.info(
+      `Found ${configuration.users.length} ${configuration.users.length > 1 ? "users" : "user"} in configuration`,
+    );
 
+    // TODO: So the function named runClock contains an argument called isClockOut, which could be a flag to control
+    // the process that this program should do or should not do.
+    // TODO: Remove this if condition expression, use ternary expression instead
     if (isClockOut) {
       logger.info(`Run clout-out process`);
     } else {
       logger.info(`Run clout-in process`);
+
+      // TODO: ! Important !
+      // In next version I will build a function to send a pack of requests to validate which openId and unionId is
+      // alive, so in next step this program can use this aliving credential to do things like clock-in
 
       for (const user of configuration.users) {
         const sessionId = await workflows.credentialLogin(user);
@@ -51,7 +61,7 @@ const main = async () => {
   const program = new Command();
 
   program
-    .name("Xyoo")
+    .name("xyoo")
     .description("Simplify clock way of Xiao Youbang")
     .version("1.0.0");
 
@@ -84,6 +94,9 @@ const main = async () => {
   program.parse();
 };
 
+/**
+ * Workflows contains functions to handle processes
+ */
 const workflows = {
   credentialLogin: async (user: ConfigurationUsersOpt): Promise<string> => {
     const response = await endpoints.user.credentialLogin(user);
