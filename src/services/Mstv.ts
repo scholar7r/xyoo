@@ -1,3 +1,5 @@
+// eslint-disable
+
 import { createHash } from "crypto";
 
 const Q = new RegExp(

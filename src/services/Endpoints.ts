@@ -45,7 +45,7 @@ interface ClockDetailDefaultResponseOpt {
   };
 }
 
-interface ClockDetailResponseOpt {}
+// interface ClockDetailResponseOpt {}
 
 interface ClockDoClockResponseOpt {
   code: string;
@@ -57,9 +57,9 @@ interface ClockDoClockResponseOpt {
   msg: string;
 }
 
-interface ClockUpdateClockResponseOpt {}
+// interface ClockUpdateClockResponseOpt {}
 
-interface ClockHistoryResponseOpt {}
+// interface ClockHistoryResponseOpt {}
 
 interface RegeoResponseOpt {
   status: string;
@@ -71,9 +71,9 @@ interface RegeoResponseOpt {
   };
 }
 
-interface PusherQmsgResponseOpt {}
+// interface PusherQmsgResponseOpt {}
 
-interface PusherWxPusherResponseOpt {}
+// interface PusherWxPusherResponseOpt {}
 
 export const endpoints = {
   user: {
