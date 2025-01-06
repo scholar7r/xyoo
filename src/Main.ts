@@ -10,51 +10,44 @@ import { endpoints } from "./services/Endpoints";
 const logger = new Logger();
 
 const main = async () => {
-  const runClock = async (isClockOut: boolean, targetFile: string) => {
+  const runClock = async (
+    isClockOut: boolean,
+    _isForce: boolean, // * isForce variable controls if current clock use force clock to update
+    targetFile: string,
+  ) => {
     const configuration: ConfigurationOpt = new Configuration(
       targetFile,
     ).read();
     logger.info(
       `Found ${configuration.users.length} ${configuration.users.length > 1 ? "users" : "user"} in configuration`,
     );
+    logger.info(`Run ${isClockOut ? "clock-out" : "clock-in"} process`);
 
-    // TODO: So the function named runClock contains an argument called isClockOut, which could be a flag to control
-    // the process that this program should do or should not do.
-    // TODO: Remove this if condition expression, use ternary expression instead
-    if (isClockOut) {
-      logger.info(`Run clout-out process`);
-    } else {
-      logger.info(`Run clout-in process`);
+    for (const user of configuration.users) {
+      const sessionId = await workflows.credentialLogin(user);
+      if (!sessionId) continue;
 
-      // TODO: ! Important !
-      // In next version I will build a function to send a pack of requests to validate which openId and unionId is
-      // alive, so in next step this program can use this aliving credential to do things like clock-in
+      const traineeId = await workflows.fetchTraineeId(sessionId);
+      if (!traineeId) continue;
 
-      for (const user of configuration.users) {
-        const sessionId = await workflows.credentialLogin(user);
-        if (!sessionId) continue;
+      const address = await workflows.fetchAddress(
+        user.address,
+        configuration.endpointSettings.amap.key,
+      );
+      if (!address) continue;
 
-        const traineeId = await workflows.fetchTraineeId(sessionId);
-        if (!traineeId) continue;
+      await workflows.doClock({
+        sessionId,
+        traineeId,
+        deviceName: user.deviceName,
+        adcode: address.addressCode,
+        address: address.formattedAddress,
+        lat: user.address.split(",").map(Number)[1],
+        lng: user.address.split(",").map(Number)[0],
+        isClockOut,
+      });
 
-        const address = await workflows.fetchAddress(
-          user.address,
-          configuration.endpointSettings.amap.key,
-        );
-        if (!address) continue;
-
-        await workflows.doClock({
-          sessionId,
-          traineeId,
-          deviceName: user.deviceName,
-          adcode: address.addressCode,
-          address: address.formattedAddress,
-          lat: user.address.split(",").map(Number)[1],
-          lng: user.address.split(",").map(Number)[0],
-        });
-
-        logger.info(`Tasks completed for current user`);
-      }
+      logger.info(`Tasks completed for current user`);
     }
   };
 
@@ -69,16 +62,18 @@ const main = async () => {
     .command("in")
     .description("run clock-in process")
     .option("-t, --target <filename>", "target configuration", "xyoo.yaml")
-    .action(async (args: { target: string }) => {
-      await runClock(false, args.target);
+    .option("-f, --force", "update clock-in to current clock")
+    .action(async (args: { target: string; force: boolean }) => {
+      await runClock(false, args.force, args.target);
     });
 
   program
     .command("out")
     .description("run clock-out process")
     .option("-t, --target <filename>", "target configuration", "xyoo.yaml")
-    .action(async (args: { target: string }) => {
-      await runClock(true, args.target);
+    .option("-f, --force", "update clock-out to current clock")
+    .action(async (args: { target: string; force: boolean }) => {
+      await runClock(true, args.force, args.target);
     });
 
   // Jokes on Mamba
@@ -86,9 +81,10 @@ const main = async () => {
     .command("mamba")
     .description("run clock-out process")
     .option("-t, --target <filename>", "target configuration", "xyoo.yaml")
-    .action(async (args: { target: string }) => {
+    .option("-f, --force", "update clock-out to current clock")
+    .action(async (args: { target: string; force: boolean }) => {
       logger.info("What can I say? Mamba out!");
-      await runClock(true, args.target);
+      await runClock(true, args.force, args.target);
     });
 
   program.parse();
@@ -175,6 +171,7 @@ const workflows = {
     adcode: string;
     lat: number;
     lng: number;
+    isClockOut: boolean;
     address: string;
     reason?: string;
   }) => {
@@ -184,7 +181,9 @@ const workflows = {
     if (response?.code === "200" && response?.msg != CLOCKED_IN_FLAG) {
       logger.info("Successful clock-in for current user");
     } else {
-      logger.warn("Current account is already clocked-in");
+      logger.warn(
+        `Current account is already ${form.isClockOut ? "clocked-out" : "clocked-in"}`,
+      );
       return;
     }
 

@@ -2,7 +2,10 @@ import axios from "axios";
 import { Logger } from "tslog";
 
 const logger = new Logger();
-export const xyooAxios = axios.create({});
+export const xyooAxios = axios.create({
+  timeout: 1000 * 10,
+  timeoutErrorMessage: "Timeout",
+});
 
 xyooAxios.interceptors.request.use(
   (request) => {

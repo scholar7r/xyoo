@@ -135,6 +135,7 @@ export const endpoints = {
       lng: number;
       address: string;
       reason?: string;
+      isClockOut: boolean;
     }): Promise<ClockDoClockResponseOpt> => {
       // Before submit clock information, it should request amap regeo endpoint to get detialed information
 
@@ -153,7 +154,7 @@ export const endpoints = {
         //
         // When develop clock-out function, doClock function can got clockStatus from arguments,
         // and do things like "if you have clocked-in, let me help you to clock-out"
-        clockStatus: "2",
+        clockStatus: clockOpt.isClockOut ? "1" : "2",
         addressId: null,
         // NOTE
         //
