@@ -2,7 +2,12 @@ import { Command } from "commander";
 import { Configuration, ConfigurationOpt } from "./domains/Configuration";
 import { Logger } from "tslog";
 import { workflows } from "./services/Workflows";
+import { readFileSync } from "node:fs";
 
+const version = (): string => {
+  const packageJson = JSON.parse(readFileSync("package.json", "utf-8"));
+  return packageJson.version;
+};
 const logger = new Logger();
 
 const main = async () => {
@@ -52,7 +57,7 @@ const main = async () => {
   program
     .name("xyoo")
     .description("Simplify clock way of Xiao Youbang")
-    .version("1.0.0");
+    .version(version());
 
   program
     .command("in")
