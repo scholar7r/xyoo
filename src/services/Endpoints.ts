@@ -7,6 +7,7 @@ const logger = new Logger();
 const endpointUrls = {
   user: {
     credentialLogin: "https://xcx.xybsyw.com/login/login.action",
+    wechatCredentialLogin: "https://xcx.xybsyw.com/login/login!wx.action",
     details: "https://xcx.xybsyw.com/account/LoadAccountInfo.action",
   },
   clock: {
@@ -89,6 +90,23 @@ export const endpoints = {
           params: {
             username: credentials.phoneNumber,
             password: credentials.digestPassword,
+            openId: credentials.openId,
+            unionId: credentials.unionId,
+          },
+        })
+        .then((response) => response.data)
+        .catch((error) => {
+          logger.error(error.data);
+        });
+    },
+    wechatCredentialLogin: async (credentials: {
+      openId: string;
+      unionId: string;
+    }): Promise<UserCrentialLoginResponseOpt> => {
+      return xyooAxios
+        .request({
+          url: endpointUrls.user.wechatCredentialLogin,
+          params: {
             openId: credentials.openId,
             unionId: credentials.unionId,
           },
