@@ -1,5 +1,8 @@
 import { Logger } from "tslog";
-import { ConfigurationUsersOpt } from "../domains/Configuration";
+import {
+  ConfigurationOpt,
+  ConfigurationUsersOpt,
+} from "../domains/Configuration";
 import { endpoints } from "./Endpoints";
 
 const logger = new Logger();
@@ -8,7 +11,9 @@ const logger = new Logger();
  * Workflows contains functions to handle processes
  */
 export const workflows = {
-  credentialLogin: async (user: ConfigurationUsersOpt): Promise<string> => {
+  credentialLogin: async (
+    user: ConfigurationUsersOpt,
+  ): Promise<string | null> => {
     const response = await endpoints.user.credentialLogin(user);
 
     if (response?.data?.sessionId) {
@@ -18,10 +23,10 @@ export const workflows = {
       return sessionId;
     }
 
-    logger.error(`Login failed with response code: ${response.code}`);
-    throw new Error(`Login failed with response code: ${response.code}`);
+    logger.error("Current account failed to login, passed");
+    return null;
   },
-  fetchLoginer: async (sessionId: string): Promise<string> => {
+  fetchLoginer: async (sessionId: string): Promise<string | null> => {
     const response = await endpoints.user.details(sessionId);
 
     if (response?.data?.loginer) {
@@ -30,14 +35,9 @@ export const workflows = {
       return loginer;
     }
 
-    logger.error(
-      `Failed to fetch loginer with response code: ${response.code}`,
-    );
-    throw new Error(
-      `Failed to fetch loginer with response code: ${response.code}`,
-    );
+    return null;
   },
-  fetchTraineeId: async (sessionId: string): Promise<string> => {
+  fetchTraineeId: async (sessionId: string): Promise<string | null> => {
     const response = await endpoints.clock.detailDefault(sessionId);
 
     if (response?.data?.clockVo?.traineeId) {
@@ -46,17 +46,12 @@ export const workflows = {
       return traineeId;
     }
 
-    logger.error(
-      `Failed to fetch traineeId with response code: ${response.code}`,
-    );
-    throw new Error(
-      `Failed to fetch traineeId with response code: ${response.code}`,
-    );
+    return null;
   },
   fetchAddress: async (
     address: string,
     key: string,
-  ): Promise<{ formattedAddress: string; addressCode: string }> => {
+  ): Promise<{ formattedAddress: string; addressCode: string } | null> => {
     const response = await endpoints.regeo(address, key);
 
     if (
@@ -71,12 +66,7 @@ export const workflows = {
       return { formattedAddress, addressCode };
     }
 
-    logger.error(
-      `Failed to fetch address information with response code: ${response.status}`,
-    );
-    throw new Error(
-      `Failed to fetch address information with response code: ${response.status}`,
-    );
+    return null;
   },
   doClock: async (form: {
     sessionId: string;
@@ -88,20 +78,62 @@ export const workflows = {
     isClockOut: boolean;
     address: string;
     reason?: string;
-  }) => {
+  }): Promise<boolean> => {
     const CLOCKED_IN_FLAG = "已经签到";
     const response = await endpoints.clock.doClock(form);
 
     if (response?.code === "200" && response?.msg != CLOCKED_IN_FLAG) {
       logger.info("Successful clock-in for current user");
+      return true;
+    } else if (response?.code === "202") {
+      logger.error(`Failed to clock: ${response.msg}`);
     } else {
       logger.warn(
         `Current account is already ${form.isClockOut ? "clocked-out" : "clocked-in"}`,
       );
-      return;
+      return true;
     }
 
-    logger.error(`Failed to clock with response code: ${response.code}`);
     throw new Error(`Failed to clock with response code: ${response.code}`);
   },
+};
+
+export const requestClock = async (
+  user: ConfigurationUsersOpt,
+  configuration: ConfigurationOpt,
+  isClockOut: boolean,
+) => {
+  const sessionId = await workflows.credentialLogin(user);
+  if (!sessionId) return false;
+
+  const loginer = await workflows.fetchLoginer(sessionId);
+  if (!loginer) return false;
+
+  const traineeId = await workflows.fetchTraineeId(sessionId);
+  if (!traineeId) return false;
+
+  const address = await workflows.fetchAddress(
+    user.address,
+    configuration.endpointSettings.amap.key,
+  );
+  if (!address) return false;
+
+  const isClockSuccess = await workflows.doClock({
+    sessionId,
+    traineeId,
+    deviceName: user.deviceName,
+    adcode: address.addressCode,
+    address: address.formattedAddress,
+    lat: user.address.split(",").map(Number)[1],
+    lng: user.address.split(",").map(Number)[0],
+    isClockOut,
+  });
+
+  if (isClockSuccess) {
+    logger.info(`${isClockOut ? "Clock-out" : "Clock-in"} finished`);
+    return true;
+  }
+
+  logger.error("An unknown error caused clock cannot continue");
+  return false;
 };
