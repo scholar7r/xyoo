@@ -9,6 +9,7 @@ export default [
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
   {
+    // Mstv is written by JavaScript, it is now not fully supported to lint
     ignores: ["src/services/Mstv.ts"],
   },
 ];

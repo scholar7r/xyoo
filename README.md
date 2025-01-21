@@ -52,20 +52,20 @@ After installed them, you can run scripts defined.
 
 **Sciprts Manual**
 
-|         Script          |  For what   |
-| :---------------------: | :---------: |
+| Script                  | For what    |
+| ----------------------- | ----------- |
 | dev <command> [options] | Run program |
 
-| Command |       For what        |
-| :-----: | :-------------------: |
-|   in    | Run clock-in process  |
-|   out   | Run clock-out process |
-|  mamba  |     Alias of out      |
+| Command | For what              |
+| ------- | --------------------- |
+| in      | Run clock-in process  |
+| out     | Run clock-out process |
+| mamba   | Alias of out          |
 
-|       Option        |                     For what                      |
-| :-----------------: | :-----------------------------------------------: |
-|    -t <filename>    | Select target configuration file to run processes |
-| --target <filename> |                    Alias of -t                    |
+| Option              | For what                                          |
+| ------------------- | ------------------------------------------------- |
+| -t <filename>       | Select target configuration file to run processes |
+| --target <filename> | Alias of -t                                       |
 
 ## 4. FaQ
 

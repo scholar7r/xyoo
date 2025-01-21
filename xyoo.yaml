@@ -11,8 +11,7 @@ users:
   # You need to fill in all the information. If you have defined some openId in openIdPool, you do not need to fill
   # in openId and unionId.
   #
-  # -
-  #   phoneNumber:  cell-phone number
+  # - phoneNumber:  cell-phone number
   #   digestPassword:  Password after MD5 digest (must be 32-bit and lower case)
   #   openId?:  The openId obtained by packet capture
   #   unionId?:  UnionId obtained by packet capture
