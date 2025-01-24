@@ -75,11 +75,11 @@ After installed them, you can run scripts defined.
 
 Due to the XiaoYouBang applet server changed it's logic to identify user's status, you should run XiaoYouBang applet before 8-12 hours.
 
-1. What Xyoo did
+2. What Xyoo did
 
 Xyoo built a platform for users to share credentials to make more peoples convenience.
 
-1. Is this program has the ablity to make a openId active?
+3. Is this program has the ablity to make a openId active?
 
 Nope, this program is not able to make a openId active, you should run XiaoYouBang applet to make it active.
 
