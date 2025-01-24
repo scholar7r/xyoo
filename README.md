@@ -1,6 +1,6 @@
 # Xyoo <sub>Client for XiaoYouBang</sub>
 
-_XiaoYouBang now updated it's applet user validate logic, our program is down now, here we welcome you to make some pull request or give some advice._
+_:warning:XiaoYouBang now updated it's applet user validate logic, our program is down now, here we welcome you to make some pull request or give some advice._
 
 ## 1. Project Structure
 
