@@ -13,7 +13,7 @@
   "author": "Scholar7r <scholar7r@outlook.com>",
   "license": "ISC",
   "devDependencies": {
-    "@eslint/js": "^9.17.0",
+    "@eslint/js": "^9.20.0",
     "@tsconfig/recommended": "^1.0.8",
     "@types/node": "^22.10.5",
     "eslint": "^9.19.0",
